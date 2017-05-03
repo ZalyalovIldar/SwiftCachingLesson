@@ -20,6 +20,8 @@ protocol CacheManagerProtocol {
     func setNSCache(status: Bool)
     func add(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ())
     func get(key: String) -> (String, UIImage)
+    func addImageArr(imageArr: [UIImage], key: String)
+    func deletDataFromCache(key: String)
 }
 
 
@@ -36,8 +38,33 @@ class CacheManager: CacheManagerProtocol {
         isNSCache = status
     }
     
-    func addImageArr(imageArr: [UIImage]) {
+    func addImageArr(imageArr: [UIImage], key: String) {
+        for (i,image) in imageArr.enumerated() {
+            if isNSCache {
+                self.cashing.setObject(image as AnyObject, forKey: "\(i) + \(key)" as AnyObject)
+            }else{
+                let maneger = SDWebImageManager.shared()
+                maneger.imageCache?.setValue(image, forKey: "\(i) + \(key)")
+            }
+            
+        }
+    }
+    
+    func addImage(image: UIImage, key: String) {
+        if isNSCache {
+            self.cashing.setObject(image as AnyObject, forKey: key as AnyObject)
+        }else{
+            let maneger = SDWebImageManager.shared()
+            maneger.imageCache?.setValue(image, forKey: key)
+        }
+    }
+    
+    func deletDataFromCache(key: String) {
+        self.cashing.removeObject(forKey: key as AnyObject)
+        let maneger = SDWebImageManager.shared()
+        maneger.imageCache?.removeImage(forKey: key, withCompletion: { 
         
+        })
     }
 
     func setDelegate(delegate: CacheDataSource) {
