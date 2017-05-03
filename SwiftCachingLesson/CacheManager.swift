@@ -9,10 +9,10 @@
 import Foundation
 
 protocol CacheDataSource {
-    func update(key: String, image: UIImage, text: String)
     func delete(key: String, image: UIImage, text: String)
     func add(key: String, url: URL, text: String)
-    func get(key: String, image: UIImage, text: String)
+    func get(key: String)
+    func update(key: String, image: UIImage, text: String)
 }
 
 protocol CacheManagerProtocol {
@@ -97,7 +97,7 @@ class CacheManager: CacheManagerProtocol {
                 })
             }).resume()
             
-            //delegate.add(key: key, url: url, text: text)
+            delegate.add(key: key, url: url, text: text)
         }
         
     }
@@ -113,7 +113,7 @@ class CacheManager: CacheManagerProtocol {
             
             image = SDWebImageManager.shared().imageCache?.imageFromCache(forKey: key)
         }
-        //delegate.get(key: key, image: image, text: text)
+        delegate.get(key: key)
         return (text, image)
     }
     
