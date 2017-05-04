@@ -10,9 +10,10 @@ import Foundation
 
 protocol CacheDataSource {
     func delete(key: String, image: UIImage, text: String)
-    func add(key: String, url: URL, text: String)
-    func get(key: String)
-    func update(key: String, image: UIImage, text: String)
+    func deleted(value: Any?, with key: String, text: String?)
+    func added(value: Any?, with key: String, url: URL?, text: String?)
+    func getCacheObject(with key:String)
+    func updateCacheObject(with key:String, image: UIImage?, text:String?)
 }
 
 protocol CacheManagerProtocol {
@@ -21,7 +22,7 @@ protocol CacheManagerProtocol {
     func add(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ())
     func get(key: String) -> (String, UIImage)
     func addImageArr(imageArr: [UIImage], key: String)
-    func deletDataFromCache(key: String)
+    func deleteDataFromCache(key: String)
 }
 
 
@@ -43,8 +44,8 @@ class CacheManager: CacheManagerProtocol {
             if isNSCache {
                 self.cashing.setObject(image as AnyObject, forKey: "\(i) + \(key)" as AnyObject)
             }else{
-                let maneger = SDWebImageManager.shared()
-                maneger.imageCache?.setValue(image, forKey: "\(i) + \(key)")
+                let manager = SDWebImageManager.shared()
+                manager.imageCache?.setValue(image, forKey: "\(i) + \(key)")
             }
             
         }
@@ -54,15 +55,15 @@ class CacheManager: CacheManagerProtocol {
         if isNSCache {
             self.cashing.setObject(image as AnyObject, forKey: key as AnyObject)
         }else{
-            let maneger = SDWebImageManager.shared()
-            maneger.imageCache?.setValue(image, forKey: key)
+            let manager = SDWebImageManager.shared()
+            manager.imageCache?.setValue(image, forKey: key)
         }
     }
     
-    func deletDataFromCache(key: String) {
+    func deleteDataFromCache(key: String) {
         self.cashing.removeObject(forKey: key as AnyObject)
-        let maneger = SDWebImageManager.shared()
-        maneger.imageCache?.removeImage(forKey: key, withCompletion: { 
+        let manager = SDWebImageManager.shared()
+        manager.imageCache?.removeImage(forKey: key, withCompletion: {
         
         })
     }
@@ -97,7 +98,7 @@ class CacheManager: CacheManagerProtocol {
                 })
             }).resume()
             
-            delegate.add(key: key, url: url, text: text)
+            delegate.added(value: nil, with: key, url: url, text: text)
         }
         
     }
@@ -113,7 +114,7 @@ class CacheManager: CacheManagerProtocol {
             
             image = SDWebImageManager.shared().imageCache?.imageFromCache(forKey: key)
         }
-        delegate.get(key: key)
+        delegate.getCacheObject(with: key)
         return (text, image)
     }
     

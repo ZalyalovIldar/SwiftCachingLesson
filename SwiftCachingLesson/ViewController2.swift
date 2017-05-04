@@ -9,6 +9,21 @@
 import UIKit
 
 class ViewController2: UIViewController, CacheDataSource {
+    func getCacheObject(with key: String) {
+    }
+
+    func delete(key: String, image: UIImage, text: String) {
+    }
+
+    func added(value: Any?, with key: String, url: URL?, text: String?) {
+    }
+
+    func updateCacheObject(with key: String, image: UIImage?, text: String?) {
+    }
+
+    func deleted(value: Any?, with key: String, text: String?) {
+    }
+
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var changeCacheSwitch: UISwitch!
@@ -19,27 +34,22 @@ class ViewController2: UIViewController, CacheDataSource {
     var task: URLSessionTask!
     var dataArr:[[String: Any]]!
     let url = "https://itunes.apple.com/search?term=flappy&entity=software"
-    
-    func delete(key: String, image: UIImage, text: String){
-        
-    }
-    func add(key: String, url: URL, text: String){
-        
-    }
-    func get(key: String){
-    }
-    func update(key: String, image: UIImage, text: String){
-    }
-    
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
+        cachingManager = CacheManager()
+        cacheConfig()
+        
+    }
+    
+    func cacheConfig() {
         changeCacheSwitch.addTarget(self, action: #selector(cacheMethodChange), for: .touchUpInside)
         
-        cachingManager = CacheManager()
+        
         cachingManager.setNSCache(status: changeCacheSwitch.isOn)
         cachingManager.setDelegate(delegate: self)
         
-        // Do any additional setup after loading the view, typically from a nib.
+        
         dataArr = []
         session = URLSession.shared
         
