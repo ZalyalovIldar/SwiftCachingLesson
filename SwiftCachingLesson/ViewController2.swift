@@ -9,20 +9,10 @@
 import UIKit
 
 class ViewController2: UIViewController, CacheDataSource {
-    func getCacheObject(with key: String) {
-    }
-
-    func delete(key: String, image: UIImage, text: String) {
-    }
-
-    func added(value: Any?, with key: String, url: URL?, text: String?) {
-    }
-
-    func updateCacheObject(with key: String, image: UIImage?, text: String?) {
-    }
-
-    func deleted(value: Any?, with key: String, text: String?) {
-    }
+    func updateed(value: Any?, with key: String, image: UIImage?, text: String?) {}
+    func geted(value: Any?, with key: String) {}
+    func added(value: Any?, with key: String, url: URL?, text: String?) {}
+    func deleted(value: Any?, with key: String, text: String?) {}
 
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -107,11 +97,10 @@ extension ViewController2: UICollectionViewDataSource, UICollectionViewDelegate{
         let textStr = dataArr[indexPath.row]["trackCensoredName"] as! String
         let url = URL(string: urlStr)!
 
-        cachingManager.add(key: key, url: url, text: textStr) { (imageBlock, stringBlock) in
+        cachingManager.addObjectInCache(key: key, url: url, text: textStr) { (imageBlock, stringBlock) in
             cell.cellImageView.sd_setImage(with: url)
             cell.cellLabel.text = stringBlock
         }
-        
         
         
   

@@ -9,18 +9,17 @@
 import Foundation
 
 protocol CacheDataSource {
-    func delete(key: String, image: UIImage, text: String)
     func deleted(value: Any?, with key: String, text: String?)
     func added(value: Any?, with key: String, url: URL?, text: String?)
-    func getCacheObject(with key:String)
-    func updateCacheObject(with key:String, image: UIImage?, text:String?)
+    func geted(value: Any?,with key:String)
+    func updateed(value: Any?,with key:String, image: UIImage?, text:String?)
 }
 
 protocol CacheManagerProtocol {
     func setDelegate(delegate:CacheDataSource)
     func setNSCache(status: Bool)
-    func add(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ())
-    func get(key: String) -> (String, UIImage)
+    func addObjectInCache(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ())
+    func getObjectFomCache(key: String) -> (text: String,image:UIImage)
     func addImageArr(imageArr: [UIImage], key: String)
     func deleteDataFromCache(key: String)
 }
@@ -72,10 +71,10 @@ class CacheManager: CacheManagerProtocol {
         self.delegate = delegate
     }
     
-    func add(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ()) {
+    func addObjectInCache(key: String, url: URL, text: String, successBlock:@escaping(_ image:UIImage, _ text:String) -> ()) {
         session = URLSession.shared
         if (cashing.object(forKey: key as AnyObject) != nil || SDWebImageManager.shared().imageCache?.imageFromCache(forKey: key) != nil) {
-            let data = self.get(key: key)
+            let data = self.getObjectFomCache(key: key)
             successBlock(data.1, data.0)
             print("Cache used")
         }else{
@@ -103,7 +102,7 @@ class CacheManager: CacheManagerProtocol {
         
     }
 
-    func get(key: String) -> (String, UIImage) {
+    func getObjectFomCache(key: String) -> (text: String,image:UIImage) {
         let text: String!
         let image: UIImage!
         
@@ -114,7 +113,7 @@ class CacheManager: CacheManagerProtocol {
             
             image = SDWebImageManager.shared().imageCache?.imageFromCache(forKey: key)
         }
-        delegate.getCacheObject(with: key)
+        delegate.geted(value: nil, with: key)
         return (text, image)
     }
     
